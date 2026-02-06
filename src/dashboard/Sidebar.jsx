@@ -15,7 +15,8 @@ import {
   Library,
   GraduationCap,
   Heart,
-  Users
+  Users,
+  Mail
 } from 'lucide-react';
 
 const sidebarItems = [
@@ -31,6 +32,7 @@ const sidebarItems = [
   { name: 'Bitcoin Resources', path: '/dashboard/upload-resources', icon: Library },
   { name: 'X Testimonials', path: '/dashboard/upload-testimonials', icon: Heart },
   { name: 'Education Testimonials', path: '/dashboard/upload-education-testimonials', icon: Users },
+  { name: 'Newsletter', path: '/dashboard/newsletter-subscribers', icon: Mail },
 ];
 
 const Sidebar = ({ open = false, onClose = () => { } }) => {

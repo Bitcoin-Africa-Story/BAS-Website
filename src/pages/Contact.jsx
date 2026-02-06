@@ -2,12 +2,50 @@ import React, { useState } from 'react';
 import { Mail, MapPin, Send, Twitter, MessageCircle } from 'lucide-react';
 import { ContactForm } from '../components/sections';
 import ScrollToTop from '../components/ScrollToTop';
+import { db } from '../firebase';
+import { collection, addDoc, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
+import { toast } from 'sonner';
 
 const Contact = () => {
   // Define a minimal icon size for the smallest screens (e.g., 18px)
   const MINIMAL_ICON_SIZE = 18;
 
   const [modal, setModal] = useState({ open: false, title: '', message: '' });
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  // Handle newsletter subscription
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    if (!newsletterEmail.trim()) return;
+
+    setIsSubscribing(true);
+    try {
+      // Check if email already exists
+      const q = query(collection(db, 'newsletterSubscribers'), where('email', '==', newsletterEmail.toLowerCase().trim()));
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        toast.info('You\'re already subscribed to our newsletter!');
+        setIsSubscribing(false);
+        return;
+      }
+
+      // Add new subscriber
+      await addDoc(collection(db, 'newsletterSubscribers'), {
+        email: newsletterEmail.toLowerCase().trim(),
+        subscribedAt: serverTimestamp()
+      });
+
+      toast.success('Successfully subscribed to our newsletter!');
+      setNewsletterEmail('');
+    } catch (error) {
+      console.error('Newsletter subscription error:', error);
+      toast.error('Failed to subscribe. Please try again.');
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
 
   return (
     <div className="pt-16">
@@ -64,10 +102,10 @@ const Contact = () => {
                     <div>
                       <h3 className="text-base sm:text-lg font-bold mb-1">Email</h3>
                       <a
-                        href="mailto:hello@bitcoinafricastory.com"
+                        href="mailto:Bitcoinafricastory@proton.me"
                         className="text-gray-400 hover:text-yellow-500 transition-colors duration-200 text-xs sm:text-sm"
                       >
-                        hello@bitcoinafricastory.com
+                        Bitcoinafricastory@proton.me
                       </a>
                     </div>
                   </div>
@@ -96,7 +134,7 @@ const Contact = () => {
                 <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">Connect on Social Media</h3>
                 <div className="space-y-3 sm:space-y-4">
                   <a
-                    href="https://twitter.com"
+                    href="https://x.com/story_bitcoin"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center p-3 sm:p-4 bg-gray-900 border border-gray-800  hover:border-yellow-500 hover:bg-gray-800 transition-all duration-300 group"
@@ -112,7 +150,7 @@ const Contact = () => {
                   </a>
 
                   <a
-                    href="https://t.me"
+                    href="https://t.me/+KirVlW8gMMtlNDI8"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center p-3 sm:p-4 bg-gray-900 border border-gray-800  hover:border-yellow-500 hover:bg-gray-800 transition-all duration-300 group"
@@ -128,11 +166,9 @@ const Contact = () => {
                   </a>
 
                   <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setModal({ open: true, title: 'Coming Soon', message: 'Nostr connection coming soon!' });
-                    }}
+                    href="https://primal.net/p/nprofile1qqs0tmrphute79adfe4r3h8qdkdgqw3fz9244238x2ss53lmhft3jug4hhw4r"
+                    target="_blank"
+                    // rel="noopener noreferrer"
                     className="flex items-center p-3 sm:p-4 bg-gray-900 border border-gray-800  hover:border-yellow-500 hover:bg-gray-800 transition-all duration-300 group"
                   >
                     {/* Reduced icon wrapper size */}
@@ -175,24 +211,25 @@ const Contact = () => {
             </p>
             <form
               className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-lg mx-auto"
-              onSubmit={(e) => {
-                e.preventDefault();
-                setModal({ open: true, title: 'Coming Soon', message: 'Newsletter signup feature coming soon!' });
-              }}
+              onSubmit={handleNewsletterSubmit}
             >
               {/* Reduced default padding on input */}
               <input
                 type="email"
                 placeholder="Enter your email"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
                 className="flex-1 px-3 py-2 sm:px-4 sm:py-3 md:px-6 md:py-4 bg-gray-900 border border-gray-700  text-white text-sm sm:text-base focus:outline-none focus:border-yellow-500"
                 required
+                disabled={isSubscribing}
               />
               {/* Reduced default padding on button */}
               <button
                 type="submit"
-                className="px-6 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-yellow-500 text-black font-bold  hover:bg-yellow-400 transition-colors duration-200 hover:scale-105"
+                disabled={isSubscribing}
+                className="px-6 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-yellow-500 text-black font-bold  hover:bg-yellow-400 transition-colors duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Subscribe
+                {isSubscribing ? 'Subscribing...' : 'Subscribe'}
               </button>
             </form>
           </div>

@@ -25,6 +25,7 @@ import UploadWhyVideo from './dashboard/UploadWhyBitcoinVideo';
 import UploadResources from './dashboard/UploadBitcoinResources';
 import UploadTestimonials from './dashboard/UploadTestimonials';
 import UploadEducationTestimonials from './dashboard/UploadEducationTestimonials';
+import NewsletterSubscribers from './dashboard/NewsletterSubscribers';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Donate from './pages/Donate';
@@ -67,6 +68,7 @@ function AppContent() {
           <Route path="upload-videos" element={<UploadVideos />} />
           <Route path="upload-why-video" element={<UploadWhyVideo />} />
           <Route path="upload-resources" element={<UploadResources />} />
+          <Route path="newsletter-subscribers" element={<NewsletterSubscribers />} />
         </Route>
       </Routes>
       {!isDashboard && <Footer />}
