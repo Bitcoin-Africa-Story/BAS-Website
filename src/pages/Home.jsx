@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Helmet } from "react-helmet";
 import { Link } from 'react-router-dom';
 import { ArrowRight, BookOpen, Users, Shield, TrendingUp } from 'lucide-react';
 import { blogPosts as mockPosts, testimonials, features, categories } from '../mock';
@@ -71,8 +72,28 @@ const Home = () => {
     ? categories.filter(c => c !== 'All')
     : Object.keys(groupedPosts);
 
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Bitcoin Africa Story",
+    "url": "https://bitcoinafricastory.com",
+    "logo": "https://bitcoinafricastory.com/assets/BASlogo.png",
+    "sameAs": [
+      "https://x.com/story_bitcoin",
+      "https://youtube.com/@bitcoinafricastory",
+      "https://t.me/+KirVlW8gMMtlNDI8",
+      "https://www.linkedin.com/company/bitcoin-africa-story/",
+      "https://primal.net/p/nprofile1qqs0tmrphute79adfe4r3h8qdkdgqw3fz9244238x2ss53lmhft3jug4hhw4r"
+    ]
+  };
+
   return (
     <div className="pt-16 md:mt-[40px]">
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(organizationSchema)}
+        </script>
+      </Helmet>
       {/* Hero Section */}
       <Hero />
 

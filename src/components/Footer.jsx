@@ -143,7 +143,7 @@ const Footer = () => {
             <Link to="/">
               <img
                 src="/assets/BASlogo.png"
-                alt="Bitcoin Africa Story Logo"
+                alt="Bitcoin Africa Story "
                 className="w-[100%] md:w-[200px] "
               />
             </Link>
