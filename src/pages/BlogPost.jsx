@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import { ArrowLeft, Calendar, Clock, Share2, Twitter, Facebook, Link2, Linkedin } from 'lucide-react';
 import { blogPosts as mockPosts } from '../mock';
 import ScrollToTop from '../components/ScrollToTop';
@@ -77,6 +78,9 @@ const BlogPost = () => {
       case 'facebook':
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
         break;
+      case 'linkedin':
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+        break;
       case 'copy':
         navigator.clipboard.writeText(url);
         setModal({ open: true, title: 'Copied', message: 'Link copied to clipboard!' });
@@ -109,11 +113,30 @@ const BlogPost = () => {
           </span>
         </div>
 
+        <Helmet>
+          <title>{post.title} | Bitcoin Africa Story</title>
+          <meta name="description" content={post.excerpt} />
+
+          {/* Open Graph / Facebook */}
+          <meta property="og:type" content="article" />
+          <meta property="og:url" content={window.location.href} />
+          <meta property="og:title" content={post.title} />
+          <meta property="og:description" content={post.excerpt} />
+          <meta property="og:image" content={post.image} />
+
+          {/* Twitter */}
+          <meta property="twitter:card" content="summary_large_image" />
+          <meta property="twitter:url" content={window.location.href} />
+          <meta property="twitter:title" content={post.title} />
+          <meta property="twitter:description" content={post.excerpt} />
+          <meta property="twitter:image" content={post.image} />
+        </Helmet>
+
         {/* Title */}
         <h1 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
           {post.title}
         </h1>
-        
+
         {/* Meta Info */}
         <div className="flex flex-wrap items-center justify-between gap-6 mb-12 p-6 bg-gray-900/50 border border-gray-800 rounded-2xl">
           <div className="flex items-center gap-4">
@@ -161,9 +184,9 @@ const BlogPost = () => {
           </div>
         </div>
 
-<p className="text-xl text-yellow-500/90 font-medium leading-relaxed mb-6 italic border-l-4 border-yellow-500 pl-6">
-            {post.excerpt}
-          </p>
+        <p className="text-xl text-yellow-500/90 font-medium leading-relaxed mb-6 italic border-l-4 border-yellow-500 pl-6">
+          {post.excerpt}
+        </p>
 
         {/* Featured Image */}
         <div className="mb-12 rounded-xl overflow-hidden">
@@ -197,6 +220,13 @@ const BlogPost = () => {
                 <Facebook size={18} />
               </button>
               <button
+                onClick={() => handleShare('linkedin')}
+                className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-yellow-500 hover:text-black transition-colors duration-200"
+                aria-label="Share on LinkedIn"
+              >
+                <Linkedin size={18} />
+              </button>
+              <button
                 onClick={() => handleShare('copy')}
                 className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-yellow-500 hover:text-black transition-colors duration-200"
                 aria-label="Copy Link"
@@ -209,7 +239,7 @@ const BlogPost = () => {
 
         {/* Article Content */}
         <div className="prose prose-invert prose-base max-w-none mb-16">
-          
+
 
           {/* YouTube Video Embed */}
           {post.youtubeUrl && (() => {
@@ -246,7 +276,7 @@ const BlogPost = () => {
         </div>
 
       </article>
-      
+
 
       {/* Related Posts */}
       {relatedPosts.length > 0 && (
@@ -284,6 +314,12 @@ const BlogPost = () => {
           </div>
         </div>
       )}
+      <StatusModal
+        open={modal.open}
+        title={modal.title}
+        message={modal.message}
+        onClose={() => setModal({ ...modal, open: false })}
+      />
       <ScrollToTop />
     </div>
   );
