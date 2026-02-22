@@ -66,8 +66,8 @@ const BlogPost = () => {
 
   const pageUrl = typeof window !== 'undefined' ? window.location.href : `https://bitcoinafricastory.com/news/${post.slug || post.id}`;
   const shareUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/share/news/${post.slug || post.id}`
-    : `https://bitcoinafricastory.com/share/news/${post.slug || post.id}`;
+    ? `${window.location.origin}/api/share-news?url=${encodeURIComponent(pageUrl)}&title=${encodeURIComponent(post.title || '')}&description=${encodeURIComponent(post.excerpt || '')}&image=${encodeURIComponent(post.image || '')}`
+    : `https://bitcoinafricastory.com/api/share-news?url=${encodeURIComponent(pageUrl)}&title=${encodeURIComponent(post.title || '')}&description=${encodeURIComponent(post.excerpt || '')}&image=${encodeURIComponent(post.image || '')}`;
   const shareTitle = `${post.title} | Bitcoin Africa Story`;
 
   const handleShare = (platform) => {
