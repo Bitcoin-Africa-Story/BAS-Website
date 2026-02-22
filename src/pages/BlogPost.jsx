@@ -65,16 +65,22 @@ const BlogPost = () => {
     .slice(0, 3);
 
   const pageUrl = typeof window !== 'undefined' ? window.location.href : `https://bitcoinafricastory.com/news/${post.slug || post.id}`;
-  const shareUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/api/share-news/${encodeURIComponent(post.slug || post.id)}`
-    : `https://bitcoinafricastory.com/api/share-news/${encodeURIComponent(post.slug || post.id)}`;
+  // Ensure image used in OG tags is an absolute URL so social platforms can fetch it
+  const imageUrl = post.image
+    ? (typeof window !== 'undefined'
+        ? new URL(post.image, window.location.origin).toString()
+        : (post.image.startsWith('http') ? post.image : `https://bitcoinafricastory.com${post.image}`))
+    : '';
+  // Use the canonical page URL for sharing (X/Twitter scrapes this URL for cards)
+  const shareUrl = pageUrl;
   const shareTitle = `${post.title} | Bitcoin Africa Story`;
 
   const handleShare = (platform) => {
     switch (platform) {
       case 'twitter':
+        // Use canonical page URL so X can scrape the page's OG tags (including image)
         window.open(
-          `https://x.com/intent/post?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`,
+          `https://x.com/intent/post?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(pageUrl)}`,
           '_blank',
           'noopener,noreferrer'
         );
@@ -86,8 +92,27 @@ const BlogPost = () => {
         window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`, '_blank', 'noopener,noreferrer');
         break;
       case 'copy':
-        navigator.clipboard.writeText(pageUrl);
-        setModal({ open: true, title: 'Copied', message: 'Link copied to clipboard!' });
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(pageUrl)
+            .then(() => setModal({ open: true, title: 'Copied', message: 'Link copied to clipboard!' }))
+            .catch(() => setModal({ open: true, title: 'Copy failed', message: 'Could not copy link. Please copy manually.' }));
+        } else {
+          // Fallback for older browsers
+          try {
+            const ta = document.createElement('textarea');
+            ta.value = pageUrl;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'absolute';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            setModal({ open: true, title: 'Copied', message: 'Link copied to clipboard!' });
+          } catch (err) {
+            setModal({ open: true, title: 'Copy failed', message: 'Could not copy link. Please copy manually.' });
+          }
+        }
         break;
       default:
         break;
@@ -196,9 +221,19 @@ const BlogPost = () => {
         </p>
 
         {/* Featured Image */}
+        <meta property="og:image" content={imageUrl} />
+          <meta property="og:image:secure_url" content={imageUrl} />
+
+          {/* Twitter */}
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:url" content={pageUrl} />
+          <meta name="twitter:title" content={post.title} />
+          <meta name="twitter:description" content={post.excerpt} />
+          <meta name="twitter:image" content={imageUrl} />
+
         <div className="mb-12 rounded-xl overflow-hidden">
           <img
-            src={post.image}
+            src={imageUrl}
             alt={post.title}
             className="w-full h-auto"
           />
