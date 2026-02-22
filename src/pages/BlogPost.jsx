@@ -1,10 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { ArrowLeft, Calendar, Clock, Share2, Twitter, Facebook, Link2, Linkedin } from 'lucide-react';
-import { blogPosts as mockPosts } from '../mock';
 import ScrollToTop from '../components/ScrollToTop';
-import { db } from '../firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { useNews } from '../context/NewsContext';
 import StatusModal from '../dashboard/components/StatusModal';
@@ -56,7 +53,7 @@ const BlogPost = () => {
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-4">Post Not Found</h1>
           <Link to="/news" className="text-yellow-500 hover:text-yellow-400">
-            ← Back to News
+            &larr; Back to News
           </Link>
         </div>
       </div>
@@ -67,22 +64,29 @@ const BlogPost = () => {
     .filter(p => p.id !== post.id && p.category === post.category)
     .slice(0, 3);
 
-  const handleShare = (platform) => {
-    const url = window.location.href;
-    const text = post.title;
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : `https://bitcoinafricastory.com/news/${post.slug || post.id}`;
+  const shareUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/share/news/${post.slug || post.id}`
+    : `https://bitcoinafricastory.com/share/news/${post.slug || post.id}`;
+  const shareTitle = `${post.title} | Bitcoin Africa Story`;
 
+  const handleShare = (platform) => {
     switch (platform) {
       case 'twitter':
-        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+        window.open(
+          `https://x.com/intent/post?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`,
+          '_blank',
+          'noopener,noreferrer'
+        );
         break;
       case 'facebook':
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`, '_blank', 'noopener,noreferrer');
         break;
       case 'linkedin':
-        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`, '_blank', 'noopener,noreferrer');
         break;
       case 'copy':
-        navigator.clipboard.writeText(url);
+        navigator.clipboard.writeText(pageUrl);
         setModal({ open: true, title: 'Copied', message: 'Link copied to clipboard!' });
         break;
       default:
@@ -116,20 +120,23 @@ const BlogPost = () => {
         <Helmet>
           <title>{post.title} | Bitcoin Africa Story</title>
           <meta name="description" content={post.excerpt} />
+          <link rel="canonical" href={pageUrl} />
 
           {/* Open Graph / Facebook */}
           <meta property="og:type" content="article" />
-          <meta property="og:url" content={window.location.href} />
+          <meta property="og:url" content={pageUrl} />
           <meta property="og:title" content={post.title} />
           <meta property="og:description" content={post.excerpt} />
           <meta property="og:image" content={post.image} />
+          <meta property="og:image:secure_url" content={post.image} />
+          <meta property="og:site_name" content="Bitcoin Africa Story" />
 
           {/* Twitter */}
-          <meta property="twitter:card" content="summary_large_image" />
-          <meta property="twitter:url" content={window.location.href} />
-          <meta property="twitter:title" content={post.title} />
-          <meta property="twitter:description" content={post.excerpt} />
-          <meta property="twitter:image" content={post.image} />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:url" content={pageUrl} />
+          <meta name="twitter:title" content={post.title} />
+          <meta name="twitter:description" content={post.excerpt} />
+          <meta name="twitter:image" content={post.image} />
         </Helmet>
 
         {/* Title */}
@@ -208,7 +215,7 @@ const BlogPost = () => {
               <button
                 onClick={() => handleShare('twitter')}
                 className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-yellow-500 hover:text-black transition-colors duration-200"
-                aria-label="Share on Twitter"
+                aria-label="Share on X"
               >
                 <Twitter size={18} />
               </button>
@@ -326,3 +333,4 @@ const BlogPost = () => {
 };
 
 export default BlogPost;
+
