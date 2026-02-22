@@ -44,10 +44,17 @@ async function findNewsBySlug(slug) {
     body: JSON.stringify(queryBody),
   });
 
-  if (!response.ok) return null;
+  if (!response.ok) {
+    console.log(`[findNewsBySlug] query failed, status: ${response.status}`);
+    return null;
+  }
   const data = await response.json();
+  console.log(`[findNewsBySlug] raw response:`, JSON.stringify(data, null, 2));
   const doc = data.find((item) => item.document)?.document;
-  if (!doc) return null;
+  if (!doc) {
+    console.log(`[findNewsBySlug] no document found for slug: ${slug}`);
+    return null;
+  }
 
   return {
     title: pickString(doc.fields, "title"),
@@ -98,6 +105,12 @@ module.exports = async (req, res) => {
   const image = escapeHtml(toAbsoluteUrl(post?.image || "", origin));
   const safePostUrl = escapeHtml(postUrl);
   const safeShareUrl = escapeHtml(shareUrl);
+
+  // DEBUG: Log what we got from Firestore
+  console.log(`[share-news] slugOrId: ${slugOrId}`);
+  console.log(`[share-news] post found:`, !!post);
+  console.log(`[share-news] post.image:`, post?.image);
+  console.log(`[share-news] resolved image URL:`, image);
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
