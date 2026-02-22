@@ -17,8 +17,12 @@ function toAbsoluteUrl(url = "", origin = "") {
   return `${origin}/${url}`;
 }
 
-function pickString(fields = {}, key = "") {
-  return fields?.[key]?.stringValue || "";
+function pickString(fields = {}, ...keys) {
+  for (const key of keys) {
+    const val = fields?.[key]?.stringValue;
+    if (val) return val;
+  }
+  return "";
 }
 
 async function findNewsBySlug(slug) {
@@ -44,22 +48,15 @@ async function findNewsBySlug(slug) {
     body: JSON.stringify(queryBody),
   });
 
-  if (!response.ok) {
-    console.log(`[findNewsBySlug] query failed, status: ${response.status}`);
-    return null;
-  }
+  if (!response.ok) return null;
   const data = await response.json();
-  console.log(`[findNewsBySlug] raw response:`, JSON.stringify(data, null, 2));
   const doc = data.find((item) => item.document)?.document;
-  if (!doc) {
-    console.log(`[findNewsBySlug] no document found for slug: ${slug}`);
-    return null;
-  }
+  if (!doc) return null;
 
   return {
     title: pickString(doc.fields, "title"),
-    excerpt: pickString(doc.fields, "excerpt"),
-    image: pickString(doc.fields, "image"),
+    excerpt: pickString(doc.fields, "excerpt", "description"),
+    image: pickString(doc.fields, "image", "imageUrl", "image_url", "featuredImage", "thumbnail"),
   };
 }
 
@@ -72,8 +69,8 @@ async function findNewsById(id) {
 
   return {
     title: pickString(doc.fields, "title"),
-    excerpt: pickString(doc.fields, "excerpt"),
-    image: pickString(doc.fields, "image"),
+    excerpt: pickString(doc.fields, "excerpt", "description"),
+    image: pickString(doc.fields, "image", "imageUrl", "image_url", "featuredImage", "thumbnail"),
   };
 }
 
@@ -102,15 +99,15 @@ module.exports = async (req, res) => {
 
   const title = escapeHtml(post?.title || "Bitcoin Africa Story");
   const description = escapeHtml(post?.excerpt || "Bitcoin Africa Story news");
-  const image = escapeHtml(toAbsoluteUrl(post?.image || "", origin));
+  const image = toAbsoluteUrl(post?.image || "", origin); // Don't escape the URL, just make it absolute
   const safePostUrl = escapeHtml(postUrl);
   const safeShareUrl = escapeHtml(shareUrl);
+  const safeTitle = escapeHtml(title); // Double-escape to avoid issues
+  const safeDescription = escapeHtml(description);
+  const safeImage = escapeHtml(image); // Only escape for HTML attribute safety
 
-  // DEBUG: Log what we got from Firestore
-  console.log(`[share-news] slugOrId: ${slugOrId}`);
-  console.log(`[share-news] post found:`, !!post);
-  console.log(`[share-news] post.image:`, post?.image);
-  console.log(`[share-news] resolved image URL:`, image);
+  // LOG for debugging
+  console.log(`[share-news] slug: ${slugOrId}, post found: ${!!post}, image raw: ${post?.image}, image final: ${image}`);
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
@@ -120,20 +117,23 @@ module.exports = async (req, res) => {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>${title}</title>
-    <meta name="description" content="${description}" />
+    <title>${safeTitle}</title>
+    <meta name="description" content="${safeDescription}" />
     <meta property="og:type" content="article" />
     <link rel="canonical" href="${safePostUrl}" />
     <meta property="og:url" content="${safePostUrl}" />
-    <meta property="og:title" content="${title}" />
-    <meta property="og:description" content="${description}" />
-    <meta property="og:image" content="${image}" />
-    <meta property="og:image:secure_url" content="${image}" />
+    <meta property="og:title" content="${safeTitle}" />
+    <meta property="og:description" content="${safeDescription}" />
+    <meta property="og:image" content="${safeImage}" />
+    <meta property="og:image:secure_url" content="${safeImage}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="${safePostUrl}" />
-    <meta name="twitter:title" content="${title}" />
-    <meta name="twitter:description" content="${description}" />
-    <meta name="twitter:image" content="${image}" />
+    <meta name="twitter:title" content="${safeTitle}" />
+    <meta name="twitter:description" content="${safeDescription}" />
+    <meta name="twitter:image" content="${safeImage}" />
     <script>window.location.replace("${safePostUrl}");</script>
   </head>
   <body>Redirecting...</body>
