@@ -110,13 +110,14 @@ module.exports = async (req, res) => {
     <title>${title}</title>
     <meta name="description" content="${description}" />
     <meta property="og:type" content="article" />
-    <meta property="og:url" content="${safeShareUrl}" />
+    <link rel="canonical" href="${safePostUrl}" />
+    <meta property="og:url" content="${safePostUrl}" />
     <meta property="og:title" content="${title}" />
     <meta property="og:description" content="${description}" />
     <meta property="og:image" content="${image}" />
     <meta property="og:image:secure_url" content="${image}" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="${safeShareUrl}" />
+    <meta name="twitter:url" content="${safePostUrl}" />
     <meta name="twitter:title" content="${title}" />
     <meta name="twitter:description" content="${description}" />
     <meta name="twitter:image" content="${image}" />

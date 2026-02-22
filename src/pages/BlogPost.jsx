@@ -71,16 +71,18 @@ const BlogPost = () => {
         ? new URL(post.image, window.location.origin).toString()
         : (post.image.startsWith('http') ? post.image : `https://bitcoinafricastory.com${post.image}`))
     : '';
-  // Use the canonical page URL for sharing (X/Twitter scrapes this URL for cards)
-  const shareUrl = pageUrl;
+  // Share endpoint returns HTML with OG tags which crawlers will scrape
+  const shareUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/api/share-news/${encodeURIComponent(post.slug || post.id)}`
+    : `https://bitcoinafricastory.com/api/share-news/${encodeURIComponent(post.slug || post.id)}`;
   const shareTitle = `${post.title} | Bitcoin Africa Story`;
 
   const handleShare = (platform) => {
     switch (platform) {
       case 'twitter':
-        // Use canonical page URL so X can scrape the page's OG tags (including image)
+        // Use the share endpoint so X scrapes the server-rendered OG tags (post image)
         window.open(
-          `https://x.com/intent/post?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(pageUrl)}`,
+          `https://x.com/intent/post?text=${encodeURIComponent(shareTitle)}&url=${encodeURIComponent(shareUrl)}`,
           '_blank',
           'noopener,noreferrer'
         );
