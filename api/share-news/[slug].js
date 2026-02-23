@@ -53,10 +53,13 @@ async function findNewsBySlug(slug) {
   const doc = data.find((item) => item.document)?.document;
   if (!doc) return null;
 
+  // Log all fields for debugging
+  console.log(`[findNewsBySlug] Document fields:`, Object.keys(doc.fields || {}));
+
   return {
     title: pickString(doc.fields, "title"),
     excerpt: pickString(doc.fields, "excerpt", "description"),
-    image: pickString(doc.fields, "image", "imageUrl", "image_url", "featuredImage", "thumbnail"),
+    image: pickString(doc.fields, "image", "imageUrl", "image_url", "featuredImage", "thumbnail", "image_url", "photoUrl"),
   };
 }
 
@@ -99,16 +102,18 @@ module.exports = async (req, res) => {
 
   const title = escapeHtml(post?.title || "Bitcoin Africa Story");
   const description = escapeHtml(post?.excerpt || "Bitcoin Africa Story news");
-  const image = toAbsoluteUrl(post?.image || "", origin);
+  const imageRaw = post?.image || "";
+  const image = imageRaw ? toAbsoluteUrl(imageRaw, origin) : `${origin}/assets/BASLOGOSmall.png`;
   const safePostUrl = escapeHtml(postUrl);
   const safeShareUrl = escapeHtml(shareUrl);
   const safeTitle = escapeHtml(title);
   const safeDescription = escapeHtml(description);
-  // Do NOT escape the image URL - it must be a valid absolute URL
-  const safeImage = image;
 
   // LOG for debugging
-  console.log(`[share-news] slug: ${slugOrId}, post found: ${!!post}, image raw: ${post?.image}, image final: ${image}`);
+  console.log(`[share-news] slug: ${slugOrId}`);
+  console.log(`[share-news] post found: ${!!post}`);
+  console.log(`[share-news] image raw: "${imageRaw}"`);
+  console.log(`[share-news] image final: "${image}"`);
 
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=600");
