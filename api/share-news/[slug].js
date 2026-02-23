@@ -99,12 +99,13 @@ module.exports = async (req, res) => {
 
   const title = escapeHtml(post?.title || "Bitcoin Africa Story");
   const description = escapeHtml(post?.excerpt || "Bitcoin Africa Story news");
-  const image = toAbsoluteUrl(post?.image || "", origin); // Don't escape the URL, just make it absolute
+  const image = toAbsoluteUrl(post?.image || "", origin);
   const safePostUrl = escapeHtml(postUrl);
   const safeShareUrl = escapeHtml(shareUrl);
-  const safeTitle = escapeHtml(title); // Double-escape to avoid issues
+  const safeTitle = escapeHtml(title);
   const safeDescription = escapeHtml(description);
-  const safeImage = escapeHtml(image); // Only escape for HTML attribute safety
+  // Do NOT escape the image URL - it must be a valid absolute URL
+  const safeImage = image;
 
   // LOG for debugging
   console.log(`[share-news] slug: ${slugOrId}, post found: ${!!post}, image raw: ${post?.image}, image final: ${image}`);
@@ -124,16 +125,15 @@ module.exports = async (req, res) => {
     <meta property="og:url" content="${safePostUrl}" />
     <meta property="og:title" content="${safeTitle}" />
     <meta property="og:description" content="${safeDescription}" />
-    <meta property="og:image" content="${safeImage}" />
-    <meta property="og:image:secure_url" content="${safeImage}" />
+    <meta property="og:image" content="${image}" />
+    <meta property="og:image:secure_url" content="${image}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:image:type" content="image/jpeg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:url" content="${safePostUrl}" />
     <meta name="twitter:title" content="${safeTitle}" />
     <meta name="twitter:description" content="${safeDescription}" />
-    <meta name="twitter:image" content="${safeImage}" />
+    <meta name="twitter:image" content="${image}" />
   </head>
   <body>
     <p>Redirecting to article...</p>
