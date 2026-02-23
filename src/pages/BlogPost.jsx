@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { ArrowLeft, Calendar, Clock, Share2, Twitter, Facebook, Link2, Linkedin } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Share2, Twitter, Facebook, Link2, Linkedin, MessageCircle } from 'lucide-react';
 import ScrollToTop from '../components/ScrollToTop';
 import { useEffect, useState } from 'react';
 import { useNews } from '../context/NewsContext';
@@ -88,21 +88,29 @@ const BlogPost = () => {
         );
         break;
       case 'facebook':
-        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`, '_blank', 'noopener,noreferrer');
+        // Use share endpoint so Facebook scrapes post image from OG tags
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank', 'noopener,noreferrer');
         break;
       case 'linkedin':
-        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`, '_blank', 'noopener,noreferrer');
+        // Use share endpoint so LinkedIn scrapes post image from OG tags
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`, '_blank', 'noopener,noreferrer');
+        break;
+      case 'whatsapp':
+        // WhatsApp doesn't scrape OG tags, but we'll use the share endpoint for consistency
+        const whatsappText = `${shareTitle} ${shareUrl}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(whatsappText)}`, '_blank', 'noopener,noreferrer');
         break;
       case 'copy':
+        // Copy the share endpoint URL so pasted links show the post image
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(pageUrl)
-            .then(() => setModal({ open: true, title: 'Copied', message: 'Link copied to clipboard!' }))
+          navigator.clipboard.writeText(shareUrl)
+            .then(() => setModal({ open: true, title: 'Copied', message: 'Share link copied to clipboard!' }))
             .catch(() => setModal({ open: true, title: 'Copy failed', message: 'Could not copy link. Please copy manually.' }));
         } else {
           // Fallback for older browsers
           try {
             const ta = document.createElement('textarea');
-            ta.value = pageUrl;
+            ta.value = shareUrl;
             ta.setAttribute('readonly', '');
             ta.style.position = 'absolute';
             ta.style.left = '-9999px';
@@ -110,7 +118,7 @@ const BlogPost = () => {
             ta.select();
             document.execCommand('copy');
             document.body.removeChild(ta);
-            setModal({ open: true, title: 'Copied', message: 'Link copied to clipboard!' });
+            setModal({ open: true, title: 'Copied', message: 'Share link copied to clipboard!' });
           } catch (err) {
             setModal({ open: true, title: 'Copy failed', message: 'Could not copy link. Please copy manually.' });
           }
@@ -269,6 +277,13 @@ const BlogPost = () => {
                 aria-label="Share on LinkedIn"
               >
                 <Linkedin size={18} />
+              </button>
+              <button
+                onClick={() => handleShare('whatsapp')}
+                className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-yellow-500 hover:text-black transition-colors duration-200"
+                aria-label="Share on WhatsApp"
+              >
+                <MessageCircle size={18} />
               </button>
               <button
                 onClick={() => handleShare('copy')}

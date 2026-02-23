@@ -134,8 +134,10 @@ module.exports = async (req, res) => {
     <meta name="twitter:title" content="${safeTitle}" />
     <meta name="twitter:description" content="${safeDescription}" />
     <meta name="twitter:image" content="${safeImage}" />
-    <script>window.location.replace("${safePostUrl}");</script>
   </head>
-  <body>Redirecting...</body>
+  <body>
+    <p>Redirecting to article...</p>
+    <script>window.location.replace("${safePostUrl}");</script>
+  </body>
 </html>`);
 };
