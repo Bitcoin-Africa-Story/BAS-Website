@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { ShieldCheck, BookOpen, Users, Heart, Zap } from 'lucide-react';
 import ScrollToTop from '../components/ScrollToTop';
@@ -10,6 +11,11 @@ const Donate = () => {
   const DONATION_IMAGE_URL = 'assets/dontebg.jpg';
   return (
     <div className='mt-[110px]'>
+      <Helmet>
+        <title>Support Bitcoin Africa | Donate to Our Mission</title>
+        <meta name="description" content="Support Bitcoin education and adoption in Africa. Your donations fund grassroots training, events, and circular economy projects." />
+        <link rel="canonical" href="https://bitcoinafricastory.com/donate" />
+      </Helmet>
       <section id="hero" className="relative  flex items-center overflow-hidden">
         <div
           className="absolute inset-0 z-0"

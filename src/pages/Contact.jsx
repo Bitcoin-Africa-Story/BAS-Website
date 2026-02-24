@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { Mail, MapPin, Send, Twitter, MessageCircle } from 'lucide-react';
 import { ContactForm } from '../components/sections';
 import ScrollToTop from '../components/ScrollToTop';
@@ -49,6 +50,11 @@ const Contact = () => {
 
   return (
     <div className="pt-16">
+      <Helmet>
+        <title>Contact Us | Bitcoin Africa Story</title>
+        <meta name="description" content="Have questions about Bitcoin or want to collaborate? Reach out to the Bitcoin Africa Story team. We'd love to hear from you." />
+        <link rel="canonical" href="https://bitcoinafricastory.com/contact" />
+      </Helmet>
       {/* Hero Section */}
       {/* Reduced default horizontal padding to px-4 */}
       <section id="hero" className="py-16 sm:py-20 px-4 bg-gradient-to-b from-gray-900/30 to-transparent">

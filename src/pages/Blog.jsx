@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Helmet } from 'react-helmet';
 // import { Link } from 'react-router-dom';
 import { Search, Calendar, Clock, Save, AlertCircle, CheckCircle, PlusCircle, User } from 'lucide-react';
 import { blogPosts as mockPosts, categories } from '../mock';
@@ -255,6 +256,11 @@ const Blog = () => {
 
   return (
     <div className="pt-16">
+      <Helmet>
+        <title>Bitcoin News & Stories | Bitcoin Africa Story</title>
+        <meta name="description" content="Stay updated with the latest Bitcoin news, adoption stories, and innovation spotlights from across the African continent." />
+        <link rel="canonical" href="https://bitcoinafricastory.com/news" />
+      </Helmet>
       {/* Hero Section */}
       <section id="hero" className="relative  flex items-center overflow-hidden">
 

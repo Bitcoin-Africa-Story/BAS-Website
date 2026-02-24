@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Search, Calendar, Clock, MapPin, Box, Ticket, X as CloseIcon, Save } from 'lucide-react';
 import ScrollToTop from '../components/ScrollToTop';
@@ -178,6 +179,11 @@ const Community = () => {
 
   return (
     <div className="mt-[75px] pb-32">
+      <Helmet>
+        <title>Bitcoin Events in Africa | Bitcoin Africa Story</title>
+        <meta name="description" content="Discover and participate in Bitcoin meetups, conferences, and workshops across Africa. Join the circular economy movement." />
+        <link rel="canonical" href="https://bitcoinafricastory.com/events" />
+      </Helmet>
       <section id="hero" className="relative flex items-center overflow-hidden">
         <div
           className="absolute inset-0 z-0"
@@ -334,7 +340,7 @@ const Community = () => {
             <p className="text-gray-400 max-w-xl mx-auto mb-6 text-sm">
               Add your event to our directory to reach thousands of builders, educators, and enthusiasts across the continent.
             </p>
-             <div className="text-gray-500 text-xs">
+            <div className="text-gray-500 text-xs">
               Want an event featured? <button onClick={() => setShowSubmitModal(true)} className="text-yellow-500 hover:underline cursor-pointer">Submit it here</button>.
             </div>
             <div className="flex flex-wrap mt-3 items-center justify-center gap-3 mb-5">
@@ -355,7 +361,7 @@ const Community = () => {
                 WhatsApp Group
               </a>
             </div>
-           
+
           </div>
 
           {/* Stats Section */}

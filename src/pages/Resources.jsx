@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet';
 import { Download, FileText, BookOpen, Shield, ExternalLink } from 'lucide-react';
 import StatusModal from '../dashboard/components/StatusModal';
 import { resources } from '../mock';
@@ -20,6 +21,11 @@ const Resources = () => {
 
   return (
     <div className="pt-16">
+      <Helmet>
+        <title>Bitcoin Tools & Resources | Bitcoin Africa Story</title>
+        <meta name="description" content="Access curated Bitcoin guides, secure wallet recommendations, and technical learning resources for your Bitcoin journey in Africa." />
+        <link rel="canonical" href="https://bitcoinafricastory.com/resources" />
+      </Helmet>
       {/* Hero Section */}
       <section className="py-20 px-6 bg-gradient-to-b from-gray-900/30 to-transparent">
         <div className="max-w-4xl mx-auto text-center">

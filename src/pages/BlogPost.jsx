@@ -68,8 +68,8 @@ const BlogPost = () => {
   // Ensure image used in OG tags is an absolute URL so social platforms can fetch it
   const imageUrl = post.image
     ? (typeof window !== 'undefined'
-        ? new URL(post.image, window.location.origin).toString()
-        : (post.image.startsWith('http') ? post.image : `https://bitcoinafricastory.com${post.image}`))
+      ? new URL(post.image, window.location.origin).toString()
+      : (post.image.startsWith('http') ? post.image : `https://bitcoinafricastory.com${post.image}`))
     : '';
   // Share endpoint returns HTML with OG tags which crawlers will scrape
   const shareUrl = typeof window !== 'undefined'
@@ -157,6 +157,30 @@ const BlogPost = () => {
           <meta name="description" content={post.excerpt} />
           <link rel="canonical" href={pageUrl} />
 
+          <script type="application/ld+json">
+            {JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "NewsArticle",
+              "headline": post.title,
+              "image": [imageUrl],
+              "datePublished": post.date ? new Date(post.date).toISOString() : new Date().toISOString(),
+              "author": [{
+                "@type": "Person",
+                "name": post.author || "Bitcoin Africa Story",
+                "url": "https://bitcoinafricastory.com/about"
+              }],
+              "publisher": {
+                "@type": "Organization",
+                "name": "Bitcoin Africa Story",
+                "logo": {
+                  "@type": "ImageObject",
+                  "url": "https://bitcoinafricastory.com/assets/BitcoinAfricaStoryLogo.png"
+                }
+              },
+              "description": post.excerpt
+            })}
+          </script>
+
           {/* Open Graph / Facebook */}
           <meta property="og:type" content="article" />
           <meta property="og:url" content={pageUrl} />
@@ -232,14 +256,14 @@ const BlogPost = () => {
 
         {/* Featured Image */}
         <meta property="og:image" content={imageUrl} />
-          <meta property="og:image:secure_url" content={imageUrl} />
+        <meta property="og:image:secure_url" content={imageUrl} />
 
-          {/* Twitter */}
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta name="twitter:url" content={pageUrl} />
-          <meta name="twitter:title" content={post.title} />
-          <meta name="twitter:description" content={post.excerpt} />
-          <meta name="twitter:image" content={imageUrl} />
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={pageUrl} />
+        <meta name="twitter:title" content={post.title} />
+        <meta name="twitter:description" content={post.excerpt} />
+        <meta name="twitter:image" content={imageUrl} />
 
         <div className="mb-12 rounded-xl overflow-hidden">
           <img

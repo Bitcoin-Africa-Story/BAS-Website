@@ -1,6 +1,7 @@
 import { Calendar, Users, Target, Heart, ArrowRight, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet';
 import ScrollToTop from '../components/ScrollToTop';
 import CountUp from '../components/ui/CountUp';
 
@@ -17,6 +18,11 @@ const About = () => {
 
   return (
     <div className="pt-16">
+      <Helmet>
+        <title>About Us | Bitcoin Africa Story</title>
+        <meta name="description" content="Learn about our mission to empower Africa through Bitcoin education, community building, and grassroots initiatives." />
+        <link rel="canonical" href="https://bitcoinafricastory.com/about" />
+      </Helmet>
       {/* Hero Section */}
       {/* <section className="py-20 px-6 bg-gradient-to-b from-gray-900/30 to-transparent">
         <div className="max-w-4xl mx-auto ">
