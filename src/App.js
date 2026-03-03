@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { newsService } from './services/newsService';
 import './App.css';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -13,6 +15,7 @@ import AdminLogin from './pages/AdminLogin';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import Dashboard from './dashboard/Dashboard';
+import BlogAnalytics from './dashboard/BlogAnalytics';
 import UploadNews from './dashboard/UploadNews';
 import UploadEvent from './dashboard/UploadEvent';
 import UploadCommunities from './dashboard/UploadCommunities';
@@ -35,6 +38,15 @@ function AppContent() {
   const location = useLocation();
   const isDashboard = location.pathname.startsWith('/dashboard');
 
+  // Track global website visits (once per session)
+  useEffect(() => {
+    const hasVisited = sessionStorage.getItem('bas_visited');
+    if (!hasVisited) {
+      newsService.incrementGlobalVisits();
+      sessionStorage.setItem('bas_visited', 'true');
+    }
+  }, []);
+
   return (
     <>
       {!isDashboard && <Header />}
@@ -51,7 +63,8 @@ function AppContent() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/admin" element={<AdminLogin />} />
         <Route path="/dashboard/*" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
-          <Route index element={<UploadNews />} />
+          <Route index element={<BlogAnalytics />} />
+          <Route path="analytics" element={<BlogAnalytics />} />
           <Route path="upload-news" element={<UploadNews />} />
           <Route path="upload-event" element={<UploadEvent />} />
           <Route path="submitted-events" element={<SubmittedEvents />} />

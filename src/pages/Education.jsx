@@ -5,7 +5,7 @@ import ScrollToTop from '../components/ScrollToTop';
 
 const Education = () => {
   return (
-  return (
+  
     <div className="pt-16">
       <Helmet>
         <title>Bitcoin Education Africa | Learn Bitcoin for Free</title>

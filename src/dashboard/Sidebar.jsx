@@ -1,6 +1,7 @@
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
+  TrendingUp,
   Newspaper,
   Calendar,
   MessageSquare,
@@ -20,6 +21,7 @@ import {
 } from 'lucide-react';
 
 const sidebarItems = [
+  { name: 'Analytics', path: '/dashboard/analytics', icon: TrendingUp },
   { name: 'News & Stories', path: '/dashboard/upload-news', icon: Newspaper },
   { name: 'Events Manager', path: '/dashboard/upload-event', icon: Calendar },
   { name: 'Submitted Events', path: '/dashboard/submitted-events', icon: MessageSquare },
