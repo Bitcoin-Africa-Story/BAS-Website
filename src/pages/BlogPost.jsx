@@ -852,11 +852,10 @@ const BlogPost = () => {
             {/* Like button */}
             <button
               onClick={handleLike}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all active:scale-95 ${
-                liked
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl border transition-all active:scale-95 ${liked
                   ? 'bg-red-500/10 border-red-500 text-red-500'
                   : 'bg-gray-800/50 border-gray-700 text-gray-400 hover:border-red-500/50 hover:text-red-400'
-              }`}
+                }`}
             >
               <Heart size={18} fill={liked ? 'currentColor' : 'none'} />
               <span className="font-bold">{likeCount.toLocaleString()}</span>
@@ -930,6 +929,7 @@ const BlogPost = () => {
             className="blog-post-content text-gray-300 leading-relaxed"
             dangerouslySetInnerHTML={{ __html: post.content }}
           />
+
         </div>
 
         {/* Comments Section */}
